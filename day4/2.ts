@@ -3,8 +3,9 @@ function findPasswords(start: number, end: number): string[] {
 
   for (let i = start; i <= end; i++) {
     const num = i.toString();
-    let adjacent = false;
     let valid = true;
+    const groups: string[][] = [];
+    let currentGroup: string[] = [num[0]];
 
     for (let j = 1; j < num.length; j++) {
       if (num[j] < num[j - 1]) {
@@ -12,12 +13,30 @@ function findPasswords(start: number, end: number): string[] {
         break;
       }
 
-      if (num[j] === num[j - 1]) {
-        adjacent = true;
+      if (currentGroup.length === 0 || currentGroup[0] === num[j]) {
+        currentGroup.push(num[j]);
+      } else {
+        groups.push(currentGroup);
+        currentGroup = [num[j]];
       }
     }
 
-    if (valid && adjacent) {
+    groups.push(currentGroup);
+
+    if (!valid) {
+      continue;
+    }
+
+    let hasAdjacent = false;
+
+    for (const group of groups) {
+      if (group.length === 2) {
+        hasAdjacent = true;
+        break;
+      }
+    }
+
+    if (hasAdjacent) {
       passwords.push(num);
     }
   }
